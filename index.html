@@ -1612,16 +1612,22 @@ function generateK6Script(name, method, url, headers, body) {
   const tokenVal  = document.getElementById('optToken')?.value?.trim() || '';
   const tokenHeader = document.getElementById('optTokenHeader')?.value?.trim() || 'X-Api-Key';
 
-  const mergedHeaders = { ...headers };
-  if (tokenType && tokenVal) {
+const mergedHeaders = { ...headers };
+
+if (!tokenType) {
+    delete mergedHeaders.Authorization;
+    delete mergedHeaders.authorization;
+}
+
+if (tokenType && tokenVal) {
     if (tokenType === 'Bearer' || tokenType === 'Basic') {
-      mergedHeaders['Authorization'] = `${tokenType} ${tokenVal}`;
+        mergedHeaders['Authorization'] = `${tokenType} ${tokenVal}`;
     } else if (tokenType === 'ApiKey') {
-      mergedHeaders[tokenHeader] = tokenVal;
+        mergedHeaders[tokenHeader] = tokenVal;
     } else if (tokenType === 'Custom') {
-      mergedHeaders['Authorization'] = tokenVal;
+        mergedHeaders['Authorization'] = tokenVal;
     }
-  }
+}
 
   if (Object.keys(mergedHeaders).length) {
     lines.push(`  const params = {`);
